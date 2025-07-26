@@ -14,7 +14,7 @@ import { useState } from "react";
 const menuItems = [
   {
     title: "Informações Básicas",
-    href: "/protected",
+    href: "/protected/display-info",
     icon: Info, 
   },
 ];

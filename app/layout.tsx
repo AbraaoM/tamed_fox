@@ -1,5 +1,6 @@
 import { GeistSans } from "geist/font/sans";
 import { ThemeProvider } from "next-themes";
+import { Toaster } from "sonner";
 import "./globals.css";
 
 const defaultUrl = process.env.VERCEL_URL
@@ -27,6 +28,7 @@ export default function RootLayout({
           disableTransitionOnChange={false}
         >
           {children}
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
