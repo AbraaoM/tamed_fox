@@ -5,11 +5,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { 
-  Home, 
-  Settings, 
-  User, 
-  FileText, 
-  BarChart3,
+  Info,
   ChevronLeft,
   ChevronRight
 } from "lucide-react";
@@ -17,29 +13,9 @@ import { useState } from "react";
 
 const menuItems = [
   {
-    title: "Dashboard",
+    title: "Informações Básicas",
     href: "/protected",
-    icon: Home,
-  },
-  {
-    title: "Projetos",
-    href: "/protected/projects",
-    icon: FileText,
-  },
-  {
-    title: "Relatórios",
-    href: "/protected/reports",
-    icon: BarChart3,
-  },
-  {
-    title: "Perfil",
-    href: "/protected/profile",
-    icon: User,
-  },
-  {
-    title: "Configurações",
-    href: "/protected/settings",
-    icon: Settings,
+    icon: Info, 
   },
 ];
 
