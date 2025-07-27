@@ -5,7 +5,8 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { 
-  Info,
+  FileText,
+  User,
   ChevronLeft,
   ChevronRight
 } from "lucide-react";
@@ -15,8 +16,13 @@ const menuItems = [
   {
     title: "Informações Básicas",
     href: "/protected/display-info",
-    icon: Info, 
+    icon: FileText,
   },
+  {
+    title: "Informações Pessoais",
+    href: "/protected/profile",
+    icon: User, 
+  }
 ];
 
 export function SidebarMenu() {
