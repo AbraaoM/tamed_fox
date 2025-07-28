@@ -4,10 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { 
-  Save, 
-  RefreshCw, 
-  Trash2, 
-  Plus,
   User,
   Mail,
   Phone,
@@ -19,16 +15,19 @@ import {
   Linkedin,
   ImageIcon,
   Building,
-  Eye,
-  Edit,
-  X,
+  FileText,
   CheckCircle,
   AlertCircle,
-  FileText
+  Edit,
+  Save,
+  X,
+  Trash2,
+  Plus,
+  Eye
 } from "lucide-react";
 import { toast } from "sonner";
 import { 
-  DisplayInfo, 
+  DisplayInfo,
   DisplayInfoFormData, 
   UpdateDisplayInfoData,
   validateDisplayInfo,
@@ -50,17 +49,28 @@ interface DisplayInfoManagerProps {
 
 export function DisplayInfoManager({ userId, profile, initialData }: DisplayInfoManagerProps) {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
   const [mode, setMode] = useState<'view' | 'edit' | 'create'>(
     initialData ? 'view' : 'create'
   );
-
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  
   const [formData, setFormData] = useState<DisplayInfoFormData>(
     initialData ? formatDisplayInfoData(initialData) : createEmptyDisplayInfo()
   );
-
+  
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return "Não informado";
+    return new Date(dateString).toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
 
   const handleInputChange = (field: keyof DisplayInfoFormData, value: string) => {
     setFormData(prev => ({
@@ -94,7 +104,7 @@ export function DisplayInfoManager({ userId, profile, initialData }: DisplayInfo
       if (mode === 'create') {
         const { error } = await supabase
           .from('display_info')
-          .insert([{ ...formData, profile_id: userId }]);
+          .insert([{ ...formData, profile_id: profile.id }]);
         
         if (error) throw error;
         toast.success("Informações criadas com sucesso!");
@@ -105,8 +115,8 @@ export function DisplayInfoManager({ userId, profile, initialData }: DisplayInfo
         const { error } = await supabase
           .from('display_info')
           .update(updateData)
-          .eq('profile_id', userId);
-        
+          .eq('profile_id', profile.id);
+
         if (error) throw error;
         toast.success("Informações atualizadas com sucesso!");
         setMode('view');
@@ -132,8 +142,8 @@ export function DisplayInfoManager({ userId, profile, initialData }: DisplayInfo
       const { error } = await supabase
         .from('display_info')
         .delete()
-        .eq('profile_id', userId);
-      
+        .eq('profile_id', profile.id);
+
       if (error) throw error;
       toast.success("Informações excluídas com sucesso!");
       setMode('create');
@@ -157,18 +167,7 @@ export function DisplayInfoManager({ userId, profile, initialData }: DisplayInfo
     setValidationErrors({});
   };
 
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return "Não informado";
-    return new Date(dateString).toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
-  // Se não há dados e não está criando, mostrar tela inicial
+  // Se não há dados e não está criando, mostrar estado vazio
   if (!initialData && mode === 'view') {
     return (
       <div className="hero min-h-96">
@@ -348,9 +347,24 @@ export function DisplayInfoManager({ userId, profile, initialData }: DisplayInfo
               {mode === 'view' ? (
                 <div className="p-4 bg-base-200 rounded-lg min-h-[52px] flex items-center text-base">
                   {formData.avatar_url ? (
-                    <a href={formData.avatar_url} target="_blank" rel="noopener noreferrer" className="link link-primary">
-                      Ver avatar
-                    </a>
+                    <div className="flex items-center gap-3">
+                      <img 
+                        src={formData.avatar_url} 
+                        alt="Avatar" 
+                        className="w-8 h-8 rounded-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                        }}
+                      />
+                      <a 
+                        href={formData.avatar_url} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="link link-primary"
+                      >
+                        Ver avatar completo
+                      </a>
+                    </div>
                   ) : (
                     <span className="text-base-content/50">Não informado</span>
                   )}
@@ -421,7 +435,13 @@ export function DisplayInfoManager({ userId, profile, initialData }: DisplayInfo
               </label>
               {mode === 'view' ? (
                 <div className="p-4 bg-base-200 rounded-lg min-h-[52px] flex items-center text-base">
-                  {formData.email_contact || <span className="text-base-content/50">Não informado</span>}
+                  {formData.email_contact ? (
+                    <a href={`mailto:${formData.email_contact}`} className="link link-primary">
+                      {formData.email_contact}
+                    </a>
+                  ) : (
+                    <span className="text-base-content/50">Não informado</span>
+                  )}
                 </div>
               ) : (
                 <>
@@ -455,7 +475,13 @@ export function DisplayInfoManager({ userId, profile, initialData }: DisplayInfo
               </label>
               {mode === 'view' ? (
                 <div className="p-4 bg-base-200 rounded-lg min-h-[52px] flex items-center text-base">
-                  {formData.phone_number || <span className="text-base-content/50">Não informado</span>}
+                  {formData.phone_number ? (
+                    <a href={`tel:${formData.phone_number}`} className="link link-primary">
+                      {formData.phone_number}
+                    </a>
+                  ) : (
+                    <span className="text-base-content/50">Não informado</span>
+                  )}
                 </div>
               ) : (
                 <>
@@ -491,8 +517,14 @@ export function DisplayInfoManager({ userId, profile, initialData }: DisplayInfo
             {mode === 'view' ? (
               <div className="p-4 bg-base-200 rounded-lg min-h-[52px] flex items-center text-base">
                 {formData.whatsapp_link ? (
-                  <a href={formData.whatsapp_link} target="_blank" rel="noopener noreferrer" className="link link-primary">
-                    {formData.whatsapp_link}
+                  <a 
+                    href={formData.whatsapp_link} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="link link-success flex items-center gap-2"
+                  >
+                    <MessageCircle className="h-4 w-4" />
+                    Conversar no WhatsApp
                   </a>
                 ) : (
                   <span className="text-base-content/50">Não informado</span>
@@ -542,7 +574,13 @@ export function DisplayInfoManager({ userId, profile, initialData }: DisplayInfo
               {mode === 'view' ? (
                 <div className="p-4 bg-base-200 rounded-lg min-h-[52px] flex items-center text-base">
                   {formData.facebook_link ? (
-                    <a href={formData.facebook_link} target="_blank" rel="noopener noreferrer" className="link link-primary">
+                    <a 
+                      href={formData.facebook_link} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="link link-primary flex items-center gap-2"
+                    >
+                      <Facebook className="h-4 w-4" />
                       Ver perfil
                     </a>
                   ) : (
@@ -582,7 +620,13 @@ export function DisplayInfoManager({ userId, profile, initialData }: DisplayInfo
               {mode === 'view' ? (
                 <div className="p-4 bg-base-200 rounded-lg min-h-[52px] flex items-center text-base">
                   {formData.instagram_link ? (
-                    <a href={formData.instagram_link} target="_blank" rel="noopener noreferrer" className="link link-primary">
+                    <a 
+                      href={formData.instagram_link} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="link link-primary flex items-center gap-2"
+                    >
+                      <Instagram className="h-4 w-4" />
                       Ver perfil
                     </a>
                   ) : (
@@ -622,7 +666,13 @@ export function DisplayInfoManager({ userId, profile, initialData }: DisplayInfo
               {mode === 'view' ? (
                 <div className="p-4 bg-base-200 rounded-lg min-h-[52px] flex items-center text-base">
                   {formData.linkedin_link ? (
-                    <a href={formData.linkedin_link} target="_blank" rel="noopener noreferrer" className="link link-primary">
+                    <a 
+                      href={formData.linkedin_link} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="link link-primary flex items-center gap-2"
+                    >
+                      <Linkedin className="h-4 w-4" />
                       Ver perfil
                     </a>
                   ) : (
@@ -674,8 +724,14 @@ export function DisplayInfoManager({ userId, profile, initialData }: DisplayInfo
               {mode === 'view' ? (
                 <div className="p-4 bg-base-200 rounded-lg min-h-[52px] flex items-center text-base">
                   {formData.website_url ? (
-                    <a href={formData.website_url} target="_blank" rel="noopener noreferrer" className="link link-primary">
-                      {formData.website_url}
+                    <a 
+                      href={formData.website_url} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="link link-primary flex items-center gap-2"
+                    >
+                      <Globe className="h-4 w-4" />
+                      Visitar website
                     </a>
                   ) : (
                     <span className="text-base-content/50">Não informado</span>
@@ -714,7 +770,13 @@ export function DisplayInfoManager({ userId, profile, initialData }: DisplayInfo
               {mode === 'view' ? (
                 <div className="p-4 bg-base-200 rounded-lg min-h-[52px] flex items-center text-base">
                   {formData.agenda_link ? (
-                    <a href={formData.agenda_link} target="_blank" rel="noopener noreferrer" className="link link-primary">
+                    <a 
+                      href={formData.agenda_link} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="link link-secondary flex items-center gap-2"
+                    >
+                      <Calendar className="h-4 w-4" />
                       Agendar reunião
                     </a>
                   ) : (
@@ -745,6 +807,56 @@ export function DisplayInfoManager({ userId, profile, initialData }: DisplayInfo
           </div>
         </div>
       </div>
+
+      {/* Progress Bar para completude */}
+      {initialData && (
+        <div className="card bg-base-100 shadow-xl">
+          <div className="card-body p-8">
+            <h3 className="card-title text-xl mb-6">Completude das Informações</h3>
+            <div className="flex items-center gap-6">
+              <progress 
+                className={`progress w-full h-4 ${
+                  completionPercentage === 100 ? 'progress-success' :
+                  completionPercentage >= 75 ? 'progress-info' :
+                  completionPercentage >= 50 ? 'progress-warning' :
+                  'progress-error'
+                }`}
+                value={completionPercentage} 
+                max="100"
+              ></progress>
+              <span className="font-bold text-lg min-w-fit">{completionPercentage}%</span>
+            </div>
+            <div className="text-base mt-4">
+              {isComplete ? (
+                <span className="text-success font-medium">✅ Informações completas!</span>
+              ) : (
+                <span className="text-warning font-medium">⚠️ Algumas informações estão faltando</span>
+              )}
+            </div>
+            
+            {/* Links sociais válidos */}
+            {socialLinks.length > 0 && (
+              <div className="mt-6">
+                <h4 className="font-semibold mb-3">Links Sociais Configurados:</h4>
+                <div className="flex flex-wrap gap-2">
+                  {socialLinks.map((link) => (
+                    <div key={link.platform} className={`badge badge-lg gap-2 ${
+                      link.isValid ? 'badge-success' : 'badge-error'
+                    }`}>
+                      {link.platform === 'facebook' && <Facebook className="h-3 w-3" />}
+                      {link.platform === 'instagram' && <Instagram className="h-3 w-3" />}
+                      {link.platform === 'linkedin' && <Linkedin className="h-3 w-3" />}
+                      {link.platform === 'whatsapp' && <MessageCircle className="h-3 w-3" />}
+                      {link.platform}
+                      {link.isValid ? '✓' : '✗'}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Informações do Sistema */}
       {initialData && (
@@ -777,56 +889,6 @@ export function DisplayInfoManager({ userId, profile, initialData }: DisplayInfo
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      )}
-
-      {/* Progress Bar para completude */}
-      {initialData && (
-        <div className="card bg-base-100 shadow-xl">
-          <div className="card-body p-8">
-            <h3 className="card-title text-xl mb-6">Completude das Informações</h3>
-            <div className="flex items-center gap-6">
-              <progress 
-                className={`progress w-full h-4 ${
-                  completionPercentage === 100 ? 'progress-success' :
-                  completionPercentage >= 75 ? 'progress-info' :
-                  completionPercentage >= 50 ? 'progress-warning' :
-                  'progress-error'
-                }`}
-                value={completionPercentage} 
-                max="100"
-              ></progress>
-              <span className="font-bold text-lg min-w-fit">{completionPercentage}%</span>
-            </div>
-            <div className="text-base mt-4">
-              {isComplete ? (
-                <span className="text-success font-medium">✅ Informações completas!</span>
-              ) : (
-                <span className="text-warning font-medium">⚠️ Complete suas informações para melhor experiência</span>
-              )}
-            </div>
-            
-            {/* Links sociais válidos */}
-            {socialLinks.length > 0 && (
-              <div className="mt-6">
-                <h4 className="font-semibold mb-3">Links Sociais Configurados:</h4>
-                <div className="flex flex-wrap gap-2">
-                  {socialLinks.map((link) => (
-                    <div key={link.platform} className={`badge badge-lg gap-2 ${
-                      link.isValid ? 'badge-success' : 'badge-error'
-                    }`}>
-                      {link.platform === 'facebook' && <Facebook className="h-3 w-3" />}
-                      {link.platform === 'instagram' && <Instagram className="h-3 w-3" />}
-                      {link.platform === 'linkedin' && <Linkedin className="h-3 w-3" />}
-                      {link.platform === 'whatsapp' && <MessageCircle className="h-3 w-3" />}
-                      {link.platform}
-                      {link.isValid ? '✓' : '✗'}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
         </div>
       )}

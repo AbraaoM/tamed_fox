@@ -10,11 +10,11 @@ export default async function DisplayInfoPage() {
     const { user, profile } = await ensureUserProfile();
     const supabase = await createClient();
 
-    // Buscar dados existentes do display_info usando o user.id
+    // Buscar dados existentes do display_info usando o profile.id
     const { data: displayInfo } = await supabase
       .from('display_info')
       .select('*')
-      .eq('profile_id', user.id)
+      .eq('profile_id', profile.id)
       .single();
 
     return (
