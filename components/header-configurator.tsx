@@ -1,0 +1,119 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
+import { toast } from "sonner";
+import { 
+  DisplayInfo,
+  validateHeaderData,
+  createEmptyHeaderData,
+  formatToHeaderData
+} from "@/models/display-info";
+import { Profile } from "@/models/profile";
+
+interface HeaderConfiguratorProps {
+  profile_id: string;
+  display_name: string;
+  logo_url: string;
+}
+
+export function HeaderConfigurator({ profile_id, display_name, logo_url }: HeaderConfiguratorProps) {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+
+  const handleSave = async () => {
+    const validation = validateHeaderData({display_name, logo_url});
+    if (!validation.isValid) {
+      setValidationErrors(validation.errors);
+      toast.error("Por favor, corrija os erros no formulário");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const supabase = createClient();
+  
+      const { error } = await supabase
+        .from('display_info')
+        .update({display_name, logo_url})
+        .eq('profile_id', profile_id);
+      
+      router.refresh();
+    } catch (error: any) {
+      console.error("Erro ao salvar:", error);
+      toast.error(`Erro ao salvar: ${error.message}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="card bg-base-100 shadow-xl">
+      <div className="card-body p-8">
+        <h2 className="text-2xl font-bold mb-8">Configurações do Header</h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Display Name */}
+          <div className="form-control w-full">
+            <label className="label pb-2">
+              <span className="label-text text-base font-medium">Nome de Exibição</span>
+            </label>
+            <input
+              type="text"
+              placeholder="Nome ou marca para exibir no header"
+              className={`input input-bordered w-full h-12 text-base ${
+                validationErrors.display_name ? 'input-error' : ''
+              }`}
+              value={display_name}
+            />
+            {validationErrors.display_name && (
+              <label className="label pt-1">
+                <span className="label-text-alt text-error text-sm">
+                  {validationErrors.display_name}
+                </span>
+              </label>
+            )}
+          </div>
+
+          {/* Logo URL */}
+          <div className="form-control w-full">
+            <label className="label pb-2">
+              <span className="label-text text-base font-medium">URL do Logo</span>
+            </label>
+            <input
+              type="url"
+              placeholder="https://exemplo.com/logo.png"
+              className={`input input-bordered w-full h-12 text-base ${
+                validationErrors.logo_url ? 'input-error' : ''
+              }`}
+              value={logo_url}
+            />
+            {validationErrors.logo_url && (
+              <label className="label pt-1">
+                <span className="label-text-alt text-error text-sm">
+                  {validationErrors.logo_url}
+                </span>
+              </label>
+            )}
+          </div>
+        </div>
+
+        <div className="card-actions justify-end mt-8">
+          <button 
+            className="btn btn-primary btn-lg px-8"
+            onClick={handleSave}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <span className="loading loading-spinner loading-sm"></span>
+            ) : null}
+            {isLoading ? "Salvando..." : "Salvar"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

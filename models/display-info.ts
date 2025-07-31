@@ -202,7 +202,7 @@ export const validateHeroData = (data: Partial<HeroFormData>) => {
   };
 };
 
-export const validateHeaderData = (data: Partial<HeaderFormData>) => {
+export const validateHeaderData = (data: { display_name?: string; logo_url?: string }) => {
   const errors: Record<string, string> = {};
 
   if (!data.display_name?.trim()) {

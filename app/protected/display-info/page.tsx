@@ -2,8 +2,8 @@ import { redirect } from "next/navigation";
 import { ensureUserProfile } from "@/lib/ensure-profile";
 import { createClient } from "@/lib/supabase/server";
 import { SidebarMenu } from "@/components/sidebar-menu";
-import { DisplayInfoManager } from "@/components/display-info-manager";
 import { DisplayInfo } from "@/models/display-info";
+import { HeaderConfigurator } from "@/components/header-configurator";
 
 export default async function DisplayInfoPage() {
   try {
@@ -11,7 +11,7 @@ export default async function DisplayInfoPage() {
     const supabase = await createClient();
 
     // Buscar dados existentes do display_info usando o profile.id
-    const { data: displayInfo } = await supabase
+    const { data: displayInfo }: { data: DisplayInfo | null} = await supabase
       .from('display_info')
       .select('*')
       .eq('profile_id', profile.id)
@@ -24,11 +24,12 @@ export default async function DisplayInfoPage() {
           <div className="max-w-4xl mx-auto">
             <h1 className="text-3xl font-bold mb-6 flex items-center gap-2">
               📋 Informações Básicas
+ 
             </h1>
-            <DisplayInfoManager 
-              userId={user.id}
-              profile={profile}
-              initialData={displayInfo as DisplayInfo | null}
+            <HeaderConfigurator
+              profile_id={profile.id}
+              display_name={displayInfo?.display_name || ""}
+              logo_url={displayInfo?.logo_url || ""}
             />
           </div>
         </div>
