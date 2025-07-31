@@ -11,6 +11,16 @@ export interface DisplayInfo {
   linkedin_link?: string;
   website_url?: string;
   bio?: string;
+  // Novos campos do Hero
+  headline?: string;
+  subheadline?: string;
+  call_to_action?: string;
+  hero_image_url?: string;
+  // Novos campos do Header
+  logo_url?: string;
+  // Campo adicional do Instagram
+  instagram_at?: string;
+  // Campos de sistema
   created_at: string;
   updated_at: string;
 }
@@ -28,6 +38,15 @@ export interface CreateDisplayInfoData {
   linkedin_link?: string;
   website_url?: string;
   bio?: string;
+  // Novos campos do Hero
+  headline?: string;
+  subheadline?: string;
+  call_to_action?: string;
+  hero_image_url?: string;
+  // Novos campos do Header
+  logo_url?: string;
+  // Campo adicional do Instagram
+  instagram_at?: string;
 }
 
 export interface UpdateDisplayInfoData {
@@ -42,6 +61,15 @@ export interface UpdateDisplayInfoData {
   linkedin_link?: string;
   website_url?: string;
   bio?: string;
+  // Novos campos do Hero
+  headline?: string;
+  subheadline?: string;
+  call_to_action?: string;
+  hero_image_url?: string;
+  // Novos campos do Header
+  logo_url?: string;
+  // Campo adicional do Instagram
+  instagram_at?: string;
 }
 
 // Tipo para formulários (sem campos do sistema)
@@ -57,6 +85,28 @@ export interface DisplayInfoFormData {
   linkedin_link: string;
   website_url: string;
   bio: string;
+  // Novos campos do Hero
+  headline: string;
+  subheadline: string;
+  call_to_action: string;
+  hero_image_url: string;
+  // Novos campos do Header
+  logo_url: string;
+  // Campo adicional do Instagram
+  instagram_at: string;
+}
+
+// Tipos específicos para os componentes
+export interface HeroFormData {
+  headline: string;
+  subheadline: string;
+  call_to_action: string;
+  hero_image_url: string;
+}
+
+export interface HeaderFormData {
+  display_name: string;
+  logo_url: string;
 }
 
 // Tipo para resposta da API
@@ -110,6 +160,59 @@ export const validateDisplayInfo = (data: Partial<DisplayInfoFormData>) => {
     errors.linkedin_link = "URL do LinkedIn inválida";
   }
 
+  // Validações para novos campos Hero
+  if (data.hero_image_url && !isValidUrl(data.hero_image_url)) {
+    errors.hero_image_url = "URL da imagem hero inválida";
+  }
+
+  // Validações para novos campos Header
+  if (data.logo_url && !isValidUrl(data.logo_url)) {
+    errors.logo_url = "URL do logo inválida";
+  }
+
+  return {
+    isValid: Object.keys(errors).length === 0,
+    errors
+  };
+};
+
+// Validações específicas para Hero e Header
+export const validateHeroData = (data: Partial<HeroFormData>) => {
+  const errors: Record<string, string> = {};
+
+  if (!data.headline?.trim()) {
+    errors.headline = 'Título principal é obrigatório';
+  }
+
+  if (!data.subheadline?.trim()) {
+    errors.subheadline = 'Subtítulo é obrigatório';
+  }
+
+  if (!data.call_to_action?.trim()) {
+    errors.call_to_action = 'Call to Action é obrigatório';
+  }
+
+  if (data.hero_image_url && !isValidUrl(data.hero_image_url)) {
+    errors.hero_image_url = 'URL da imagem deve ser válida';
+  }
+
+  return {
+    isValid: Object.keys(errors).length === 0,
+    errors
+  };
+};
+
+export const validateHeaderData = (data: Partial<HeaderFormData>) => {
+  const errors: Record<string, string> = {};
+
+  if (!data.display_name?.trim()) {
+    errors.display_name = 'Nome de exibição é obrigatório';
+  }
+
+  if (data.logo_url && !isValidUrl(data.logo_url)) {
+    errors.logo_url = 'URL do logo deve ser válida';
+  }
+
   return {
     isValid: Object.keys(errors).length === 0,
     errors
@@ -151,7 +254,7 @@ const isValidSocialUrl = (url: string, platform: 'facebook' | 'instagram' | 'lin
   return patterns[platform].test(url) || isValidUrl(url);
 };
 
-// Constantes
+// Constantes atualizadas
 export const DISPLAY_INFO_FIELDS = {
   DISPLAY_NAME: 'display_name',
   AVATAR_URL: 'avatar_url',
@@ -163,7 +266,16 @@ export const DISPLAY_INFO_FIELDS = {
   INSTAGRAM_LINK: 'instagram_link',
   LINKEDIN_LINK: 'linkedin_link',
   WEBSITE_URL: 'website_url',
-  BIO: 'bio'
+  BIO: 'bio',
+  // Novos campos Hero
+  HEADLINE: 'headline',
+  SUBHEADLINE: 'subheadline',
+  CALL_TO_ACTION: 'call_to_action',
+  HERO_IMAGE_URL: 'hero_image_url',
+  // Novos campos Header
+  LOGO_URL: 'logo_url',
+  // Campo adicional Instagram
+  INSTAGRAM_AT: 'instagram_at'
 } as const;
 
 export const DISPLAY_INFO_LABELS = {
@@ -177,15 +289,39 @@ export const DISPLAY_INFO_LABELS = {
   [DISPLAY_INFO_FIELDS.INSTAGRAM_LINK]: 'Instagram',
   [DISPLAY_INFO_FIELDS.LINKEDIN_LINK]: 'LinkedIn',
   [DISPLAY_INFO_FIELDS.WEBSITE_URL]: 'Website',
-  [DISPLAY_INFO_FIELDS.BIO]: 'Biografia'
+  [DISPLAY_INFO_FIELDS.BIO]: 'Biografia',
+  // Novos campos Hero
+  [DISPLAY_INFO_FIELDS.HEADLINE]: 'Título Principal',
+  [DISPLAY_INFO_FIELDS.SUBHEADLINE]: 'Subtítulo',
+  [DISPLAY_INFO_FIELDS.CALL_TO_ACTION]: 'Call to Action',
+  [DISPLAY_INFO_FIELDS.HERO_IMAGE_URL]: 'Imagem Hero',
+  // Novos campos Header
+  [DISPLAY_INFO_FIELDS.LOGO_URL]: 'Logo',
+  // Campo adicional Instagram
+  [DISPLAY_INFO_FIELDS.INSTAGRAM_AT]: 'Instagram @'
 } as const;
 
-// Categorias para organização da UI
+// Categorias atualizadas para organização da UI
 export const DISPLAY_INFO_CATEGORIES = {
+  HERO: {
+    label: 'Configurações Hero',
+    fields: [
+      DISPLAY_INFO_FIELDS.HEADLINE,
+      DISPLAY_INFO_FIELDS.SUBHEADLINE,
+      DISPLAY_INFO_FIELDS.CALL_TO_ACTION,
+      DISPLAY_INFO_FIELDS.HERO_IMAGE_URL
+    ]
+  },
+  HEADER: {
+    label: 'Configurações Header',
+    fields: [
+      DISPLAY_INFO_FIELDS.DISPLAY_NAME,
+      DISPLAY_INFO_FIELDS.LOGO_URL
+    ]
+  },
   PERSONAL: {
     label: 'Informações Pessoais',
     fields: [
-      DISPLAY_INFO_FIELDS.DISPLAY_NAME,
       DISPLAY_INFO_FIELDS.AVATAR_URL,
       DISPLAY_INFO_FIELDS.BIO
     ]
@@ -203,6 +339,7 @@ export const DISPLAY_INFO_CATEGORIES = {
     fields: [
       DISPLAY_INFO_FIELDS.FACEBOOK_LINK,
       DISPLAY_INFO_FIELDS.INSTAGRAM_LINK,
+      DISPLAY_INFO_FIELDS.INSTAGRAM_AT,
       DISPLAY_INFO_FIELDS.LINKEDIN_LINK
     ]
   },
@@ -215,7 +352,7 @@ export const DISPLAY_INFO_CATEGORIES = {
   }
 } as const;
 
-// Utilitários
+// Utilitários atualizados
 export const createEmptyDisplayInfo = (): DisplayInfoFormData => ({
   display_name: '',
   avatar_url: '',
@@ -227,7 +364,28 @@ export const createEmptyDisplayInfo = (): DisplayInfoFormData => ({
   instagram_link: '',
   linkedin_link: '',
   website_url: '',
-  bio: ''
+  bio: '',
+  // Novos campos Hero
+  headline: '',
+  subheadline: '',
+  call_to_action: '',
+  hero_image_url: '',
+  // Novos campos Header
+  logo_url: '',
+  // Campo adicional Instagram
+  instagram_at: ''
+});
+
+export const createEmptyHeroData = (): HeroFormData => ({
+  headline: '',
+  subheadline: '',
+  call_to_action: '',
+  hero_image_url: ''
+});
+
+export const createEmptyHeaderData = (): HeaderFormData => ({
+  display_name: '',
+  logo_url: ''
 });
 
 export const formatDisplayInfoData = (displayInfo: DisplayInfo): DisplayInfoFormData => ({
@@ -241,7 +399,28 @@ export const formatDisplayInfoData = (displayInfo: DisplayInfo): DisplayInfoForm
   instagram_link: displayInfo.instagram_link || '',
   linkedin_link: displayInfo.linkedin_link || '',
   website_url: displayInfo.website_url || '',
-  bio: displayInfo.bio || ''
+  bio: displayInfo.bio || '',
+  // Novos campos Hero
+  headline: displayInfo.headline || '',
+  subheadline: displayInfo.subheadline || '',
+  call_to_action: displayInfo.call_to_action || '',
+  hero_image_url: displayInfo.hero_image_url || '',
+  // Novos campos Header
+  logo_url: displayInfo.logo_url || '',
+  // Campo adicional Instagram
+  instagram_at: displayInfo.instagram_at || ''
+});
+
+export const formatToHeroData = (displayInfo: DisplayInfo): HeroFormData => ({
+  headline: displayInfo.headline || '',
+  subheadline: displayInfo.subheadline || '',
+  call_to_action: displayInfo.call_to_action || '',
+  hero_image_url: displayInfo.hero_image_url || ''
+});
+
+export const formatToHeaderData = (displayInfo: DisplayInfo): HeaderFormData => ({
+  display_name: displayInfo.display_name || '',
+  logo_url: displayInfo.logo_url || ''
 });
 
 export const isDisplayInfoComplete = (displayInfo: DisplayInfo): boolean => {
@@ -249,6 +428,20 @@ export const isDisplayInfoComplete = (displayInfo: DisplayInfo): boolean => {
     displayInfo.display_name &&
     displayInfo.email_contact &&
     displayInfo.phone_number
+  );
+};
+
+export const isHeroComplete = (displayInfo: DisplayInfo): boolean => {
+  return !!(
+    displayInfo.headline &&
+    displayInfo.subheadline &&
+    displayInfo.call_to_action
+  );
+};
+
+export const isHeaderComplete = (displayInfo: DisplayInfo): boolean => {
+  return !!(
+    displayInfo.display_name
   );
 };
 
@@ -264,11 +457,40 @@ export const getDisplayInfoCompletionPercentage = (displayInfo: DisplayInfo): nu
     displayInfo.instagram_link,
     displayInfo.linkedin_link,
     displayInfo.website_url,
-    displayInfo.bio
+    displayInfo.bio,
+    // Novos campos
+    displayInfo.headline,
+    displayInfo.subheadline,
+    displayInfo.call_to_action,
+    displayInfo.hero_image_url,
+    displayInfo.logo_url,
+    displayInfo.instagram_at
   ];
   
   const filledFields = fields.filter(field => field && field.trim() !== '').length;
   return Math.round((filledFields / fields.length) * 100);
+};
+
+export const getHeroCompletionPercentage = (displayInfo: DisplayInfo): number => {
+  const heroFields = [
+    displayInfo.headline,
+    displayInfo.subheadline,
+    displayInfo.call_to_action,
+    displayInfo.hero_image_url
+  ];
+  
+  const filledFields = heroFields.filter(field => field && field.trim() !== '').length;
+  return Math.round((filledFields / heroFields.length) * 100);
+};
+
+export const getHeaderCompletionPercentage = (displayInfo: DisplayInfo): number => {
+  const headerFields = [
+    displayInfo.display_name,
+    displayInfo.logo_url
+  ];
+  
+  const filledFields = headerFields.filter(field => field && field.trim() !== '').length;
+  return Math.round((filledFields / headerFields.length) * 100);
 };
 
 // Helpers para formatação de links
