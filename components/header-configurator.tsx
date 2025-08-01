@@ -5,12 +5,8 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { 
-  DisplayInfo,
   validateHeaderData,
-  createEmptyHeaderData,
-  formatToHeaderData
 } from "@/models/display-info";
-import { Profile } from "@/models/profile";
 
 interface HeaderConfiguratorProps {
   profile_id: string;
