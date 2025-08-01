@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { SidebarMenu } from "@/components/sidebar-menu";
 import { DisplayInfo } from "@/models/display-info";
 import { HeaderConfigurator } from "@/components/header-configurator";
+import { HeroConfigurator } from "@/components/hero-configurator";
 
 export default async function DisplayInfoPage() {
   try {
@@ -30,6 +31,13 @@ export default async function DisplayInfoPage() {
               profile_id={profile.id}
               display_name={displayInfo?.display_name || ""}
               logo_url={displayInfo?.logo_url || ""}
+            />
+            <HeroConfigurator 
+              profile_id={profile.id}
+              headline={displayInfo?.headline || ""}
+              subheadline={displayInfo?.subheadline || ""}
+              call_to_action={displayInfo?.call_to_action || ""}
+              hero_image_url={displayInfo?.hero_image_url || ""}
             />
           </div>
         </div>
