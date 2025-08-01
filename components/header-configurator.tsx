@@ -22,10 +22,33 @@ export function HeaderConfigurator({ profile_id, display_name, logo_url }: Heade
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   
+  // Estados para os campos editáveis
+  const [formData, setFormData] = useState({
+    display_name: display_name || '',
+    logo_url: logo_url || ''
+  });
+  
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
 
+  // Handler para mudanças nos campos
+  const handleChange = (field: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+
+    // Limpar erro de validação quando o usuário começar a digitar
+    if (validationErrors[field]) {
+      setValidationErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[field];
+        return newErrors;
+      });
+    }
+  };
+
   const handleSave = async () => {
-    const validation = validateHeaderData({display_name, logo_url});
+    const validation = validateHeaderData(formData);
     if (!validation.isValid) {
       setValidationErrors(validation.errors);
       toast.error("Por favor, corrija os erros no formulário");
@@ -38,9 +61,12 @@ export function HeaderConfigurator({ profile_id, display_name, logo_url }: Heade
   
       const { error } = await supabase
         .from('display_info')
-        .update({display_name, logo_url})
+        .update(formData)
         .eq('profile_id', profile_id);
       
+      if (error) throw error;
+      
+      toast.success("Header atualizado com sucesso!");
       router.refresh();
     } catch (error: any) {
       console.error("Erro ao salvar:", error);
@@ -67,7 +93,8 @@ export function HeaderConfigurator({ profile_id, display_name, logo_url }: Heade
               className={`input input-bordered w-full h-12 text-base ${
                 validationErrors.display_name ? 'input-error' : ''
               }`}
-              value={display_name}
+              value={formData.display_name}
+              onChange={(e) => handleChange('display_name', e.target.value)}
             />
             {validationErrors.display_name && (
               <label className="label pt-1">
@@ -89,7 +116,8 @@ export function HeaderConfigurator({ profile_id, display_name, logo_url }: Heade
               className={`input input-bordered w-full h-12 text-base ${
                 validationErrors.logo_url ? 'input-error' : ''
               }`}
-              value={logo_url}
+              value={formData.logo_url}
+              onChange={(e) => handleChange('logo_url', e.target.value)}
             />
             {validationErrors.logo_url && (
               <label className="label pt-1">
