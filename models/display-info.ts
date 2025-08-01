@@ -15,6 +15,7 @@ export interface DisplayInfo {
   headline?: string;
   subheadline?: string;
   call_to_action?: string;
+  call_to_action_url?: string;
   hero_image_url?: string;
   // Novos campos do Header
   logo_url?: string;
@@ -42,6 +43,7 @@ export interface CreateDisplayInfoData {
   headline?: string;
   subheadline?: string;
   call_to_action?: string;
+  call_to_action_url?: string;
   hero_image_url?: string;
   // Novos campos do Header
   logo_url?: string;
@@ -65,6 +67,7 @@ export interface UpdateDisplayInfoData {
   headline?: string;
   subheadline?: string;
   call_to_action?: string;
+  call_to_action_url?: string;
   hero_image_url?: string;
   // Novos campos do Header
   logo_url?: string;
@@ -85,14 +88,15 @@ export interface DisplayInfoFormData {
   linkedin_link: string;
   website_url: string;
   bio: string;
-  // Novos campos do Hero
+  // Novos campos Hero
   headline: string;
   subheadline: string;
   call_to_action: string;
+  call_to_action_url: string;
   hero_image_url: string;
-  // Novos campos do Header
+  // Novos campos Header
   logo_url: string;
-  // Campo adicional do Instagram
+  // Campo adicional Instagram
   instagram_at: string;
 }
 
@@ -101,6 +105,7 @@ export interface HeroFormData {
   headline: string;
   subheadline: string;
   call_to_action: string;
+  call_to_action_url: string;
   hero_image_url: string;
 }
 
@@ -165,6 +170,10 @@ export const validateDisplayInfo = (data: Partial<DisplayInfoFormData>) => {
     errors.hero_image_url = "URL da imagem hero inválida";
   }
 
+  if (data.call_to_action_url && !isValidUrl(data.call_to_action_url)) {
+    errors.call_to_action_url = "URL do Call to Action inválida";
+  }
+
   // Validações para novos campos Header
   if (data.logo_url && !isValidUrl(data.logo_url)) {
     errors.logo_url = "URL do logo inválida";
@@ -190,6 +199,10 @@ export const validateHeroData = (data: Partial<HeroFormData>) => {
 
   if (!data.call_to_action?.trim()) {
     errors.call_to_action = 'Call to Action é obrigatório';
+  }
+
+  if (data.call_to_action_url && !isValidUrl(data.call_to_action_url)) {
+    errors.call_to_action_url = 'URL do Call to Action deve ser válida';
   }
 
   if (data.hero_image_url && !isValidUrl(data.hero_image_url)) {
@@ -271,6 +284,7 @@ export const DISPLAY_INFO_FIELDS = {
   HEADLINE: 'headline',
   SUBHEADLINE: 'subheadline',
   CALL_TO_ACTION: 'call_to_action',
+  CALL_TO_ACTION_URL: 'call_to_action_url',
   HERO_IMAGE_URL: 'hero_image_url',
   // Novos campos Header
   LOGO_URL: 'logo_url',
@@ -294,6 +308,7 @@ export const DISPLAY_INFO_LABELS = {
   [DISPLAY_INFO_FIELDS.HEADLINE]: 'Título Principal',
   [DISPLAY_INFO_FIELDS.SUBHEADLINE]: 'Subtítulo',
   [DISPLAY_INFO_FIELDS.CALL_TO_ACTION]: 'Call to Action',
+  [DISPLAY_INFO_FIELDS.CALL_TO_ACTION_URL]: 'URL do Call to Action',
   [DISPLAY_INFO_FIELDS.HERO_IMAGE_URL]: 'Imagem Hero',
   // Novos campos Header
   [DISPLAY_INFO_FIELDS.LOGO_URL]: 'Logo',
@@ -309,6 +324,7 @@ export const DISPLAY_INFO_CATEGORIES = {
       DISPLAY_INFO_FIELDS.HEADLINE,
       DISPLAY_INFO_FIELDS.SUBHEADLINE,
       DISPLAY_INFO_FIELDS.CALL_TO_ACTION,
+      DISPLAY_INFO_FIELDS.CALL_TO_ACTION_URL,
       DISPLAY_INFO_FIELDS.HERO_IMAGE_URL
     ]
   },
@@ -369,6 +385,7 @@ export const createEmptyDisplayInfo = (): DisplayInfoFormData => ({
   headline: '',
   subheadline: '',
   call_to_action: '',
+  call_to_action_url: '',
   hero_image_url: '',
   // Novos campos Header
   logo_url: '',
@@ -380,6 +397,7 @@ export const createEmptyHeroData = (): HeroFormData => ({
   headline: '',
   subheadline: '',
   call_to_action: '',
+  call_to_action_url: '',
   hero_image_url: ''
 });
 
@@ -404,6 +422,7 @@ export const formatDisplayInfoData = (displayInfo: DisplayInfo): DisplayInfoForm
   headline: displayInfo.headline || '',
   subheadline: displayInfo.subheadline || '',
   call_to_action: displayInfo.call_to_action || '',
+  call_to_action_url: displayInfo.call_to_action_url || '',
   hero_image_url: displayInfo.hero_image_url || '',
   // Novos campos Header
   logo_url: displayInfo.logo_url || '',
@@ -415,6 +434,7 @@ export const formatToHeroData = (displayInfo: DisplayInfo): HeroFormData => ({
   headline: displayInfo.headline || '',
   subheadline: displayInfo.subheadline || '',
   call_to_action: displayInfo.call_to_action || '',
+  call_to_action_url: displayInfo.call_to_action_url || '',
   hero_image_url: displayInfo.hero_image_url || ''
 });
 
@@ -462,6 +482,7 @@ export const getDisplayInfoCompletionPercentage = (displayInfo: DisplayInfo): nu
     displayInfo.headline,
     displayInfo.subheadline,
     displayInfo.call_to_action,
+    displayInfo.call_to_action_url,
     displayInfo.hero_image_url,
     displayInfo.logo_url,
     displayInfo.instagram_at
@@ -476,6 +497,7 @@ export const getHeroCompletionPercentage = (displayInfo: DisplayInfo): number =>
     displayInfo.headline,
     displayInfo.subheadline,
     displayInfo.call_to_action,
+    displayInfo.call_to_action_url,
     displayInfo.hero_image_url
   ];
   
