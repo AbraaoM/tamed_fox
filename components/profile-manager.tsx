@@ -17,7 +17,9 @@ import {
   AlertCircle,
   Edit,
   Eye,
-  X
+  X,
+  Copy,
+  Check
 } from "lucide-react";
 import { toast } from "sonner";
 import { 
@@ -42,6 +44,7 @@ export function ProfileManager({ userId, initialData }: ProfileManagerProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
   const [mode, setMode] = useState<'view' | 'edit' | 'create'>(
     initialData ? 'view' : 'create'
   );
@@ -51,6 +54,21 @@ export function ProfileManager({ userId, initialData }: ProfileManagerProps) {
   );
 
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+
+  const handleCopyToClipboard = async (text: string, fieldName: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedField(fieldName);
+      toast.success(`${fieldName} copiado para a área de transferência!`);
+      
+      // Reset icon after 2 seconds
+      setTimeout(() => {
+        setCopiedField(null);
+      }, 2000);
+    } catch (err) {
+      toast.error("Erro ao copiar para a área de transferência");
+    }
+  };
 
   const handleInputChange = (field: keyof ProfileFormData, value: string) => {
     setFormData(prev => ({
@@ -215,9 +233,25 @@ export function ProfileManager({ userId, initialData }: ProfileManagerProps) {
           
           {initialData && (
             <>
-              <div className="badge badge-outline badge-md font-mono text-xs px-3 py-2">
-                ID: {initialData.id.slice(0, 8)}...
+              {/* Profile ID melhorado com copy/paste */}
+              <div className="flex items-center gap-2 bg-base-200 rounded-lg px-3 py-2">
+                <span className="text-xs text-base-content/70 font-medium">Profile ID:</span>
+                <code className="font-mono text-xs bg-base-300 px-2 py-1 rounded">
+                  {initialData.id}
+                </code>
+                <button
+                  className="btn btn-ghost btn-xs gap-1 hover:bg-base-300"
+                  onClick={() => handleCopyToClipboard(initialData.id, 'Profile ID')}
+                  title="Copiar Profile ID"
+                >
+                  {copiedField === 'Profile ID' ? (
+                    <Check className="h-3 w-3 text-success" />
+                  ) : (
+                    <Copy className="h-3 w-3" />
+                  )}
+                </button>
               </div>
+              
               <div className={`badge badge-lg gap-2 px-4 py-3 text-sm font-medium ${
                 isComplete ? 'badge-success' : 'badge-warning'
               }`}>
@@ -302,8 +336,21 @@ export function ProfileManager({ userId, initialData }: ProfileManagerProps) {
                 </span>
               </label>
               {mode === 'view' ? (
-                <div className="p-4 bg-base-200 rounded-lg min-h-[52px] flex items-center text-base">
-                  {formData.full_name || <span className="text-base-content/50">Não informado</span>}
+                <div className="p-4 bg-base-200 rounded-lg min-h-[52px] flex items-center justify-between text-base">
+                  <span>{formData.full_name || <span className="text-base-content/50">Não informado</span>}</span>
+                  {formData.full_name && (
+                    <button
+                      className="btn btn-ghost btn-sm gap-1 ml-2"
+                      onClick={() => handleCopyToClipboard(formData.full_name, 'Nome')}
+                      title="Copiar nome"
+                    >
+                      {copiedField === 'Nome' ? (
+                        <Check className="h-3 w-3 text-success" />
+                      ) : (
+                        <Copy className="h-3 w-3" />
+                      )}
+                    </button>
+                  )}
                 </div>
               ) : (
                 <>
@@ -337,8 +384,21 @@ export function ProfileManager({ userId, initialData }: ProfileManagerProps) {
                 </span>
               </label>
               {mode === 'view' ? (
-                <div className="p-4 bg-base-200 rounded-lg min-h-[52px] flex items-center text-base">
-                  {formData.internal_email || <span className="text-base-content/50">Não informado</span>}
+                <div className="p-4 bg-base-200 rounded-lg min-h-[52px] flex items-center justify-between text-base">
+                  <span>{formData.internal_email || <span className="text-base-content/50">Não informado</span>}</span>
+                  {formData.internal_email && (
+                    <button
+                      className="btn btn-ghost btn-sm gap-1 ml-2"
+                      onClick={() => handleCopyToClipboard(formData.internal_email, 'Email')}
+                      title="Copiar email"
+                    >
+                      {copiedField === 'Email' ? (
+                        <Check className="h-3 w-3 text-success" />
+                      ) : (
+                        <Copy className="h-3 w-3" />
+                      )}
+                    </button>
+                  )}
                 </div>
               ) : (
                 <>
@@ -374,8 +434,21 @@ export function ProfileManager({ userId, initialData }: ProfileManagerProps) {
                 </span>
               </label>
               {mode === 'view' ? (
-                <div className="p-4 bg-base-200 rounded-lg min-h-[52px] flex items-center text-base">
-                  {formData.internal_phone || <span className="text-base-content/50">Não informado</span>}
+                <div className="p-4 bg-base-200 rounded-lg min-h-[52px] flex items-center justify-between text-base">
+                  <span>{formData.internal_phone || <span className="text-base-content/50">Não informado</span>}</span>
+                  {formData.internal_phone && (
+                    <button
+                      className="btn btn-ghost btn-sm gap-1 ml-2"
+                      onClick={() => handleCopyToClipboard(formData.internal_phone, 'Telefone')}
+                      title="Copiar telefone"
+                    >
+                      {copiedField === 'Telefone' ? (
+                        <Check className="h-3 w-3 text-success" />
+                      ) : (
+                        <Copy className="h-3 w-3" />
+                      )}
+                    </button>
+                  )}
                 </div>
               ) : (
                 <>
@@ -408,8 +481,21 @@ export function ProfileManager({ userId, initialData }: ProfileManagerProps) {
                 </span>
               </label>
               {mode === 'view' ? (
-                <div className="p-4 bg-base-200 rounded-lg min-h-[52px] flex items-center text-base">
-                  {formData.company_name || <span className="text-base-content/50">Não informado</span>}
+                <div className="p-4 bg-base-200 rounded-lg min-h-[52px] flex items-center justify-between text-base">
+                  <span>{formData.company_name || <span className="text-base-content/50">Não informado</span>}</span>
+                  {formData.company_name && (
+                    <button
+                      className="btn btn-ghost btn-sm gap-1 ml-2"
+                      onClick={() => handleCopyToClipboard(formData.company_name, 'Empresa')}
+                      title="Copiar nome da empresa"
+                    >
+                      {copiedField === 'Empresa' ? (
+                        <Check className="h-3 w-3 text-success" />
+                      ) : (
+                        <Copy className="h-3 w-3" />
+                      )}
+                    </button>
+                  )}
                 </div>
               ) : (
                 <input
@@ -432,8 +518,21 @@ export function ProfileManager({ userId, initialData }: ProfileManagerProps) {
               </span>
             </label>
             {mode === 'view' ? (
-              <div className="p-4 bg-base-200 rounded-lg min-h-[52px] flex items-center text-base">
-                {formData.document_id || <span className="text-base-content/50">Não informado</span>}
+              <div className="p-4 bg-base-200 rounded-lg min-h-[52px] flex items-center justify-between text-base">
+                <span>{formData.document_id || <span className="text-base-content/50">Não informado</span>}</span>
+                {formData.document_id && (
+                  <button
+                    className="btn btn-ghost btn-sm gap-1 ml-2"
+                    onClick={() => handleCopyToClipboard(formData.document_id, 'Documento')}
+                    title="Copiar documento"
+                  >
+                    {copiedField === 'Documento' ? (
+                      <Check className="h-3 w-3 text-success" />
+                    ) : (
+                      <Copy className="h-3 w-3" />
+                    )}
+                  </button>
+                )}
               </div>
             ) : (
               <>
@@ -469,8 +568,19 @@ export function ProfileManager({ userId, initialData }: ProfileManagerProps) {
                 <label className="label pb-2">
                   <span className="label-text text-base font-medium">ID do Usuário:</span>
                 </label>
-                <div className="p-4 bg-base-200 rounded-lg font-mono text-sm break-all">
-                  {initialData.user_id}
+                <div className="p-4 bg-base-200 rounded-lg flex items-center justify-between">
+                  <code className="font-mono text-sm break-all">{initialData.user_id}</code>
+                  <button
+                    className="btn btn-ghost btn-sm gap-1 ml-2"
+                    onClick={() => handleCopyToClipboard(initialData.user_id, 'User ID')}
+                    title="Copiar User ID"
+                  >
+                    {copiedField === 'User ID' ? (
+                      <Check className="h-3 w-3 text-success" />
+                    ) : (
+                      <Copy className="h-3 w-3" />
+                    )}
+                  </button>
                 </div>
               </div>
               <div className="form-control">
