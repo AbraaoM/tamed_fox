@@ -8,7 +8,7 @@ import { HeroConfigurator } from "@/components/hero-configurator";
 
 export default async function DisplayInfoPage() {
   try {
-    const { user, profile } = await ensureUserProfile();
+    const { profile } = await ensureUserProfile();
     const supabase = await createClient();
 
     // Buscar dados existentes do display_info usando o profile.id
