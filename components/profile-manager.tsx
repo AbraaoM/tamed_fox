@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { 
   Save, 
-  RefreshCw, 
   Trash2, 
   Plus,
   User,
@@ -103,9 +102,18 @@ export function ProfileManager({ userId, initialData }: ProfileManagerProps) {
       }
       
       router.refresh();
-    } catch (error: any) {
-      console.error("Erro ao salvar:", error);
-      toast.error(`Erro ao salvar: ${error.message}`);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        // Agora o 'error' é tipado como 'Error'
+        console.error("Erro capturado:", error.message);
+        toast.error(`Erro ao salvar: ${error.message}`);
+      } else if (typeof error === 'string') {
+        // Agora o 'error' é tipado como 'string'
+        console.error("Erro capturado (string):", error);
+      } else {
+        // Caso o erro não seja uma instância de Error ou uma string
+        console.error("Erro desconhecido:", error);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -129,9 +137,18 @@ export function ProfileManager({ userId, initialData }: ProfileManagerProps) {
       setMode('create');
       setFormData(createEmptyProfile());
       router.refresh();
-    } catch (error: any) {
-      console.error("Erro ao excluir:", error);
-      toast.error("Erro ao excluir o perfil");
+   } catch (error: unknown) {
+      if (error instanceof Error) {
+        // Agora o 'error' é tipado como 'Error'
+        console.error("Erro capturado:", error.message);
+        toast.error(`Erro ao excluir perfil: ${error.message}`);
+      } else if (typeof error === 'string') {
+        // Agora o 'error' é tipado como 'string'
+        console.error("Erro capturado (string):", error);
+      } else {
+        // Caso o erro não seja uma instância de Error ou uma string
+        console.error("Erro desconhecido:", error);
+      }
     } finally {
       setIsDeleting(false);
     }
