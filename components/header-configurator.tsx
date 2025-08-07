@@ -64,9 +64,18 @@ export function HeaderConfigurator({ profile_id, display_name, logo_url }: Heade
       
       toast.success("Header atualizado com sucesso!");
       router.refresh();
-    } catch (error: any) {
-      console.error("Erro ao salvar:", error);
-      toast.error(`Erro ao salvar: ${error.message}`);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        // Agora o 'error' é tipado como 'Error'
+        console.error("Erro capturado:", error.message);
+        toast.error(`Erro ao salvar: ${error.message}`);
+      } else if (typeof error === 'string') {
+        // Agora o 'error' é tipado como 'string'
+        console.error("Erro capturado (string):", error);
+      } else {
+        // Caso o erro não seja uma instância de Error ou uma string
+        console.error("Erro desconhecido:", error);
+      }
     } finally {
       setIsLoading(false);
     }
