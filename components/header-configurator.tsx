@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { useBerrySync } from "@/hooks/use-berry-sync";
 import { toast } from "sonner";
 import { 
   validateHeaderData,
@@ -16,6 +17,7 @@ interface HeaderConfiguratorProps {
 
 export function HeaderConfigurator({ profile_id, display_name, logo_url }: HeaderConfiguratorProps) {
   const router = useRouter();
+  const { syncLeafToBushes } = useBerrySync();
   const [isLoading, setIsLoading] = useState(false);
   
   // Estados para os campos editáveis
@@ -55,26 +57,38 @@ export function HeaderConfigurator({ profile_id, display_name, logo_url }: Heade
     try {
       const supabase = createClient();
   
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('display_info')
         .update(formData)
-        .eq('profile_id', profile_id);
+        .eq('profile_id', profile_id)
+        .select()
+        .single();
       
       if (error) throw error;
       
       toast.success("Header atualizado com sucesso!");
+      
+      // Invalidar cache da Vercel
+      if (data) {
+        await syncLeafToBushes({
+          id: data.id || profile_id,
+          type: 'header',
+          data: data,
+          updated_at: data.updated_at || new Date().toISOString()
+        });
+      }
+      
       router.refresh();
     } catch (error: unknown) {
       if (error instanceof Error) {
-        // Agora o 'error' é tipado como 'Error'
         console.error("Erro capturado:", error.message);
         toast.error(`Erro ao salvar: ${error.message}`);
       } else if (typeof error === 'string') {
-        // Agora o 'error' é tipado como 'string'
         console.error("Erro capturado (string):", error);
+        toast.error(`Erro ao salvar: ${error}`);
       } else {
-        // Caso o erro não seja uma instância de Error ou uma string
         console.error("Erro desconhecido:", error);
+        toast.error("Erro desconhecido ao salvar");
       }
     } finally {
       setIsLoading(false);
