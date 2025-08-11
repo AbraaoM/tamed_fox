@@ -9,10 +9,10 @@ export class VercelCacheService {
   private baseUrl = 'https://api.vercel.com';
 
   constructor() {
-    this.token = process.env.VERCEL_TOKEN || '';
+    this.token = process.env.NEXT_PUBLIC_VERCEL_TOKEN || '';
     
     if (!this.token) {
-      console.warn('VERCEL_TOKEN not found. Cache invalidation will be skipped.');
+      console.warn('NEXT_PUBLIC_VERCEL_TOKEN not found. Cache invalidation will be skipped.');
     }
   }
 
@@ -21,10 +21,10 @@ export class VercelCacheService {
    */
   async invalidateCache(options: VercelCacheInvalidationOptions = {}): Promise<boolean> {
     try {
-      const deployHookUrl = process.env.VERCEL_DEPLOY_HOOK_URL;
-      
+      const deployHookUrl = process.env.NEXT_PUBLIC_VERCEL_DEPLOY_HOOK_URL;
+
       if (!deployHookUrl) {
-        console.warn('VERCEL_DEPLOY_HOOK_URL not configured');
+        console.warn('NEXT_PUBLIC_VERCEL_DEPLOY_HOOK_URL not configured');
         return false;
       }
 
@@ -57,13 +57,13 @@ export class VercelCacheService {
   async invalidateCacheByPaths(paths: string[]): Promise<boolean> {
     try {
       if (!this.token) {
-        console.warn('VERCEL_TOKEN not configured');
+        console.warn('NEXT_PUBLIC_VERCEL_TOKEN not configured');
         return false;
       }
 
-      const projectId = process.env.VERCEL_PROJECT_ID;
+      const projectId = process.env.NEXT_PUBLIC_VERCEL_PROJECT_ID;
       if (!projectId) {
-        console.warn('VERCEL_PROJECT_ID not configured');
+        console.warn('NEXT_PUBLIC_VERCEL_PROJECT_ID not configured');
         return false;
       }
 
@@ -96,7 +96,7 @@ export class VercelCacheService {
   async getProjectInfo(projectId: string) {
     try {
       if (!this.token) {
-        throw new Error('VERCEL_TOKEN not configured');
+        throw new Error('NEXT_PUBLIC_VERCEL_TOKEN not configured');
       }
 
       const response = await fetch(`${this.baseUrl}/v1/projects/${projectId}`, {
