@@ -3,9 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { useBerrySync } from "@/hooks/use-berry-sync";
 import { toast } from "sonner";
 import { 
   validateHeroData,
+  type HeroFormData
 } from "@/models/display-info";
 
 interface HeroConfiguratorProps {
@@ -13,6 +15,7 @@ interface HeroConfiguratorProps {
   headline: string;
   subheadline: string;
   call_to_action: string;
+  call_to_action_url: string;
   hero_image_url: string;
 }
 
@@ -20,24 +23,27 @@ export function HeroConfigurator({
   profile_id, 
   headline, 
   subheadline, 
-  call_to_action, 
-  hero_image_url 
+  call_to_action,
+  call_to_action_url,
+  hero_image_url
 }: HeroConfiguratorProps) {
   const router = useRouter();
+  const { syncLeafToBushes } = useBerrySync();
   const [isLoading, setIsLoading] = useState(false);
   
   // Estados para os campos editáveis
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<HeroFormData>({
     headline: headline || '',
     subheadline: subheadline || '',
     call_to_action: call_to_action || '',
+    call_to_action_url: call_to_action_url || '',
     hero_image_url: hero_image_url || ''
   });
   
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
 
   // Handler para mudanças nos campos
-  const handleChange = (field: string, value: string) => {
+  const handleChange = (field: keyof HeroFormData, value: string) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
@@ -65,26 +71,38 @@ export function HeroConfigurator({
     try {
       const supabase = createClient();
   
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('display_info')
         .update(formData)
-        .eq('profile_id', profile_id);
+        .eq('profile_id', profile_id)
+        .select()
+        .single();
       
       if (error) throw error;
       
       toast.success("Hero atualizado com sucesso!");
+      
+      // Invalidar cache da Vercel
+      if (data) {
+        await syncLeafToBushes({
+          id: data.profile_id || profile_id,
+          type: 'hero',
+          data: data,
+          updated_at: data.updated_at || new Date().toISOString()
+        });
+      }
+      
       router.refresh();
-   } catch (error: unknown) {
+    } catch (error: unknown) {
       if (error instanceof Error) {
-        // Agora o 'error' é tipado como 'Error'
         console.error("Erro capturado:", error.message);
         toast.error(`Erro ao salvar: ${error.message}`);
       } else if (typeof error === 'string') {
-        // Agora o 'error' é tipado como 'string'
         console.error("Erro capturado (string):", error);
+        toast.error(`Erro ao salvar: ${error}`);
       } else {
-        // Caso o erro não seja uma instância de Error ou uma string
         console.error("Erro desconhecido:", error);
+        toast.error("Erro desconhecido ao salvar");
       }
     } finally {
       setIsLoading(false);
@@ -96,15 +114,15 @@ export function HeroConfigurator({
       <div className="card-body p-8">
         <h2 className="text-2xl font-bold mb-8">Configurações do Hero</h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="space-y-6">
           {/* Headline */}
           <div className="form-control w-full">
             <label className="label pb-2">
-              <span className="label-text text-base font-medium">Título Principal (headline)</span>
+              <span className="label-text text-base font-medium">Título Principal</span>
             </label>
             <input
               type="text"
-              placeholder="Seu título principal"
+              placeholder="Título impactante para a seção hero"
               className={`input input-bordered w-full h-12 text-base ${
                 validationErrors.headline ? 'input-error' : ''
               }`}
@@ -120,6 +138,29 @@ export function HeroConfigurator({
             )}
           </div>
 
+          {/* Subheadline */}
+          <div className="form-control w-full">
+            <label className="label pb-2">
+              <span className="label-text text-base font-medium">Subtítulo</span>
+            </label>
+            <input
+              type="text"
+              placeholder="Subtítulo complementar"
+              className={`input input-bordered w-full h-12 text-base ${
+                validationErrors.subheadline ? 'input-error' : ''
+              }`}
+              value={formData.subheadline}
+              onChange={(e) => handleChange('subheadline', e.target.value)}
+            />
+            {validationErrors.subheadline && (
+              <label className="label pt-1">
+                <span className="label-text-alt text-error text-sm">
+                  {validationErrors.subheadline}
+                </span>
+              </label>
+            )}
+          </div>
+
           {/* Call to Action */}
           <div className="form-control w-full">
             <label className="label pb-2">
@@ -127,7 +168,7 @@ export function HeroConfigurator({
             </label>
             <input
               type="text"
-              placeholder="Ex: Entre em contato, Saiba mais, etc."
+              placeholder="Texto do botão principal"
               className={`input input-bordered w-full h-12 text-base ${
                 validationErrors.call_to_action ? 'input-error' : ''
               }`}
@@ -143,10 +184,33 @@ export function HeroConfigurator({
             )}
           </div>
 
+          {/* Call to Action URL */}
+          <div className="form-control w-full">
+            <label className="label pb-2">
+              <span className="label-text text-base font-medium">URL do Call to Action</span>
+            </label>
+            <input
+              type="url"
+              placeholder="https://exemplo.com"
+              className={`input input-bordered w-full h-12 text-base ${
+                validationErrors.call_to_action_url ? 'input-error' : ''
+              }`}
+              value={formData.call_to_action_url}
+              onChange={(e) => handleChange('call_to_action_url', e.target.value)}
+            />
+            {validationErrors.call_to_action_url && (
+              <label className="label pt-1">
+                <span className="label-text-alt text-error text-sm">
+                  {validationErrors.call_to_action_url}
+                </span>
+              </label>
+            )}
+          </div>
+
           {/* Hero Image URL */}
           <div className="form-control w-full">
             <label className="label pb-2">
-              <span className="label-text text-base font-medium">URL da Imagem Hero</span>
+              <span className="label-text text-base font-medium">Imagem de Fundo</span>
             </label>
             <input
               type="url"
@@ -161,28 +225,6 @@ export function HeroConfigurator({
               <label className="label pt-1">
                 <span className="label-text-alt text-error text-sm">
                   {validationErrors.hero_image_url}
-                </span>
-              </label>
-            )}
-          </div>
-
-          {/* Subheadline - Campo maior que ocupa espaço extra */}
-          <div className="form-control w-full">
-            <label className="label pb-2">
-              <span className="label-text text-base font-medium">Subtítulo (subheadline)</span>
-            </label>
-            <textarea
-              placeholder="Seu subtítulo ou descrição..."
-              className={`textarea textarea-bordered w-full h-12 text-base resize-none ${
-                validationErrors.subheadline ? 'textarea-error' : ''
-              }`}
-              value={formData.subheadline}
-              onChange={(e) => handleChange('subheadline', e.target.value)}
-            />
-            {validationErrors.subheadline && (
-              <label className="label pt-1">
-                <span className="label-text-alt text-error text-sm">
-                  {validationErrors.subheadline}
                 </span>
               </label>
             )}
