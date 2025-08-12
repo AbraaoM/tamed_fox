@@ -2,13 +2,13 @@
 
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
-import { LogOut, User, Home } from 'lucide-react';
+import { LogOut, User as UserIcon, Home } from 'lucide-react';
 import { toast } from 'sonner';
 import { useState } from 'react';
-import { UserResponse } from '@supabase/supabase-js';
+import { User } from '@supabase/supabase-js'
 
 interface NavbarProps {
-  user?: UserResponse;
+  user?: User;
 }
 
 export function Navbar({ user }: NavbarProps) {
@@ -57,7 +57,7 @@ export function Navbar({ user }: NavbarProps) {
             </li>
             <li>
               <a href="/protected/profile" className="flex items-center gap-2">
-                <User className="h-4 w-4" />
+                <UserIcon className="h-4 w-4" />
                 Perfil
               </a>
             </li>
@@ -84,7 +84,7 @@ export function Navbar({ user }: NavbarProps) {
           </li>
           <li>
             <a href="/protected/profile" className="btn btn-ghost gap-2">
-              <User className="h-4 w-4" />
+              <UserIcon className="h-4 w-4" />
               Perfil
             </a>
           </li>
@@ -110,7 +110,7 @@ export function Navbar({ user }: NavbarProps) {
               <div className="divider my-1"></div>
               <li>
                 <a href="/protected/profile" className="flex items-center gap-2">
-                  <User className="h-4 w-4" />
+                  <UserIcon className="h-4 w-4" />
                   Meu Perfil
                 </a>
               </li>
