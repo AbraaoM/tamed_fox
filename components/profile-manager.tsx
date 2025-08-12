@@ -30,8 +30,6 @@ import {
   createEmptyProfile,
   isProfileComplete,
   getProfileCompletionPercentage,
-  PROFILE_LABELS,
-  PROFILE_FIELDS
 } from "@/models/profile";
 
 interface ProfileManagerProps {
@@ -64,7 +62,7 @@ export function ProfileManager({ userId, initialData }: ProfileManagerProps) {
         setCopiedField(null);
       }, 2000);
     } catch (err) {
-      toast.error("Erro ao copiar");
+      toast.error(err instanceof Error ? err.message : "Erro desconhecido");
     }
   };
 
@@ -169,17 +167,6 @@ export function ProfileManager({ userId, initialData }: ProfileManagerProps) {
       setMode('create');
     }
     setValidationErrors({});
-  };
-
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return "Não informado";
-    return new Date(dateString).toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
   };
 
   // Se não há dados e não está criando, mostrar tela inicial
