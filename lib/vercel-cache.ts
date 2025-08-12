@@ -1,9 +1,3 @@
-interface VercelCacheInvalidationOptions {
-  projectId?: string;
-  deploymentUrl?: string;
-  paths?: string[];
-}
-
 export class VercelCacheService {
   private token: string;
   private baseUrl = 'https://api.vercel.com';
@@ -19,7 +13,7 @@ export class VercelCacheService {
   /**
    * Invalida o cache da Vercel usando Deploy Hook
    */
-  async invalidateCache(options: VercelCacheInvalidationOptions = {}): Promise<boolean> {
+  async invalidateCache(): Promise<boolean> {
     try {
       const deployHookUrl = process.env.NEXT_PUBLIC_VERCEL_DEPLOY_HOOK_URL;
 
