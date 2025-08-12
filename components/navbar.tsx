@@ -5,9 +5,10 @@ import { useRouter } from 'next/navigation';
 import { LogOut, User, Home } from 'lucide-react';
 import { toast } from 'sonner';
 import { useState } from 'react';
+import { UserResponse } from '@supabase/supabase-js';
 
 interface NavbarProps {
-  user?: any;
+  user?: UserResponse;
 }
 
 export function Navbar({ user }: NavbarProps) {
