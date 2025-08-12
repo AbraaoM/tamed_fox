@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useBerrySync } from "@/hooks/use-berry-sync";
 import { toast } from "sonner";
+import Image from "next/image";
 import { 
   validateHeaderData,
 } from "@/models/display-info";
@@ -158,7 +159,7 @@ export function HeaderConfigurator({ profile_id, display_name, logo_url }: Heade
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 sm:p-4 bg-white rounded-lg shadow-sm gap-3 sm:gap-0">
               <div className="flex items-center gap-2 sm:gap-3">
                 {formData.logo_url && (
-                  <img 
+                  <Image 
                     src={formData.logo_url} 
                     alt="Logo" 
                     className="h-6 w-6 sm:h-8 sm:w-8 object-contain"
