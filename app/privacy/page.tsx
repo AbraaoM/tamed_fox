@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function PrivacyPage() {
   return (
     <div className="min-h-screen bg-base-200 py-8 sm:py-12 lg:py-16">
@@ -45,7 +47,7 @@ export default function PrivacyPage() {
                   <div>
                     <h3 className="font-bold text-info-content">Sobre Esta Política</h3>
                     <div className="text-sm text-info-content/90 leading-relaxed">
-                      Descrevemos como o Tamed Fox ("nós", "nosso") coleta, usa, armazena e protege as informações de nossos usuários ("você", "seu") ao usar nossa plataforma.
+                      Descrevemos como o Tamed Fox (&quot;nós&quot;, &quot;nosso&quot;) coleta, usa, armazena e protege as informações de nossos usuários (&quot;você&quot;, &quot;seu&quot;) ao usar nossa plataforma.
                     </div>
                   </div>
                 </div>
@@ -368,15 +370,15 @@ export default function PrivacyPage() {
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="/terms" className="btn btn-outline btn-md px-6">
+                <Link href="/terms" className="btn btn-outline btn-md px-6">
                   📋 Termos de Uso
-                </a>
-                <a href="/auth/login" className="btn btn-primary btn-md px-6">
+                </Link>
+                <Link href="/auth/login" className="btn btn-primary btn-md px-6">
                   🦊 Voltar ao Login
-                </a>
-                <a href="/" className="btn btn-ghost btn-md px-6">
+                </Link>
+                <Link href="/" className="btn btn-ghost btn-md px-6">
                   🏠 Página Inicial
-                </a>
+                </Link>
               </div>
             </div>
           </div>

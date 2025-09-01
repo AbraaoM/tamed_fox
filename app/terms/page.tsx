@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function TermsPage() {
   return (
     <div className="min-h-screen bg-base-200 py-8 sm:py-12 lg:py-16">
@@ -145,7 +147,7 @@ export default function TermsPage() {
                   5. Limitação de Responsabilidade
                 </h2>
                 <p className="leading-relaxed">
-                  O serviço é fornecido <strong>"no estado em que se encontra"</strong> e <strong>"conforme disponível"</strong>, sem garantias de qualquer tipo. A empresa não se responsabiliza por quaisquer danos diretos, indiretos, incidentais ou consequenciais que resultem do uso ou da incapacidade de usar o serviço.
+                  O serviço é fornecido <strong>&quot;no estado em que se encontra&quot;</strong> e <strong>&quot;conforme disponível&quot;</strong>, sem garantias de qualquer tipo. A empresa não se responsabiliza por quaisquer danos diretos, indiretos, incidentais ou consequenciais que resultem do uso ou da incapacidade de usar o serviço.
                 </p>
                 <div className="stats stats-vertical lg:stats-horizontal shadow my-6">
                   <div className="stat">
@@ -153,7 +155,7 @@ export default function TermsPage() {
                       <div className="text-2xl">⚠️</div>
                     </div>
                     <div className="stat-title">Serviço fornecido</div>
-                    <div className="stat-value text-warning">"As Is"</div>
+                    <div className="stat-value text-warning">&quot;As Is&quot;</div>
                     <div className="stat-desc">Sem garantias</div>
                   </div>
                 </div>
@@ -236,15 +238,15 @@ export default function TermsPage() {
               </div>
               
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <a href="/privacy" className="btn btn-outline btn-sm">
+                <Link href="/privacy" className="btn btn-outline btn-sm">
                   📋 Política de Privacidade
-                </a>
-                <a href="/auth/login" className="btn btn-primary btn-sm">
+                </Link>
+                <Link href="/auth/login" className="btn btn-primary btn-sm">
                   🦊 Voltar ao Login
-                </a>
-                <a href="/" className="btn btn-ghost btn-sm">
+                </Link>
+                <Link href="/" className="btn btn-ghost btn-sm">
                   🏠 Página Inicial
-                </a>
+                </Link>
               </div>
             </div>
           </div>
