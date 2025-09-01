@@ -100,7 +100,7 @@ export default function Home() {
           <ThemeSwitcher />
         </div>
         <div className="text-xs sm:text-sm text-base-content/60">
-          © 2024 Tamed Fox. Todos os direitos reservados.
+          © 2025 Tamed Fox. Todos os direitos reservados.
         </div>
       </footer>
     </div>
