@@ -97,8 +97,16 @@ export function SignUpForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">Sign up</CardTitle>
-          <CardDescription>Create a new account</CardDescription>
+          <div className="flex flex-col items-center mb-6">
+            <div className="text-5xl mb-3">🦊</div>
+            <h1 className="text-2xl font-bold text-center tracking-wide">
+              TAMED FOX
+            </h1>
+          </div>
+          <CardTitle className="text-xl">Criar Conta</CardTitle>
+          <CardDescription>
+            Crie uma nova conta para acessar a plataforma
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSignUp}>
@@ -114,29 +122,29 @@ export function SignUpForm({
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
+              
               <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                </div>
-                <div className="join w-full">
+                <Label htmlFor="password">Senha</Label>
+                <div className="relative">
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Sua senha"
-                    className="input input-bordered join-item flex-1 h-11 sm:h-12 text-sm sm:text-base"
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    className="pr-12"
                   />
                   <button
                     type="button"
-                    className="btn btn-outline join-item h-11 sm:h-12 px-3 sm:px-4"
+                    className="absolute inset-y-0 right-0 flex items-center justify-center w-12 h-full rounded-r-md hover:bg-muted/50 transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
                     onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
                   >
                     {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
+                      <EyeOff className="h-4 w-4 text-muted-foreground hover:text-foreground transition-colors" />
                     ) : (
-                      <Eye className="h-4 w-4" />
+                      <Eye className="h-4 w-4 text-muted-foreground hover:text-foreground transition-colors" />
                     )}
                   </button>
                 </div>
@@ -145,7 +153,7 @@ export function SignUpForm({
                 {password && (
                   <div className="mt-2">
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="text-xs sm:text-sm text-base-content/70">Força da senha:</span>
+                      <span className="text-xs sm:text-sm text-muted-foreground">Força da senha:</span>
                       <div className="flex gap-1">
                         {[...Array(5)].map((_, i) => (
                           <div
@@ -153,11 +161,11 @@ export function SignUpForm({
                             className={`w-2 h-2 rounded-full ${
                               i < passwordStrength
                                 ? passwordStrength <= 2
-                                  ? 'bg-error'
+                                  ? 'bg-red-500'
                                   : passwordStrength <= 3
-                                  ? 'bg-warning'
-                                  : 'bg-success'
-                                : 'bg-base-300'
+                                  ? 'bg-yellow-500'
+                                  : 'bg-green-500'
+                                : 'bg-muted'
                             }`}
                           />
                         ))}
@@ -166,18 +174,18 @@ export function SignUpForm({
                         {passwordStrength <= 2 ? 'Fraca' : passwordStrength <= 3 ? 'Média' : 'Forte'}
                       </span>
                     </div>
-                    <div className="text-xs text-base-content/60 space-y-1">
+                    <div className="text-xs text-muted-foreground space-y-1">
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
-                        <div className={password.length >= 8 ? 'text-success' : 'text-base-content/60'}>
+                        <div className={password.length >= 8 ? 'text-green-600' : 'text-muted-foreground'}>
                           ✓ 8+ caracteres
                         </div>
-                        <div className={/(?=.*[a-z])/.test(password) ? 'text-success' : 'text-base-content/60'}>
+                        <div className={/(?=.*[a-z])/.test(password) ? 'text-green-600' : 'text-muted-foreground'}>
                           ✓ Letra minúscula
                         </div>
-                        <div className={/(?=.*[A-Z])/.test(password) ? 'text-success' : 'text-base-content/60'}>
+                        <div className={/(?=.*[A-Z])/.test(password) ? 'text-green-600' : 'text-muted-foreground'}>
                           ✓ Letra maiúscula
                         </div>
-                        <div className={/(?=.*\d)/.test(password) ? 'text-success' : 'text-base-content/60'}>
+                        <div className={/(?=.*\d)/.test(password) ? 'text-green-600' : 'text-muted-foreground'}>
                           ✓ Número
                         </div>
                       </div>
@@ -187,39 +195,36 @@ export function SignUpForm({
               </div>
 
               <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="confirm-password">Confirm Password</Label>
-                </div>
-                <div className="join w-full">
+                <Label htmlFor="confirm-password">Confirmar Senha</Label>
+                <div className="relative">
                   <Input
                     id="confirm-password"
                     type={showConfirmPassword ? "text" : "password"}
                     placeholder="Confirme sua senha"
-                    className={`input input-bordered join-item flex-1 h-11 sm:h-12 text-sm sm:text-base ${
-                      confirmPassword && password !== confirmPassword ? 'input-error' : ''
-                    }`}
                     required
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
+                    className={`pr-12 ${
+                      confirmPassword && password !== confirmPassword ? 'border-red-500 focus:ring-red-500' : ''
+                    }`}
                   />
                   <button
                     type="button"
-                    className="btn btn-outline join-item h-11 sm:h-12 px-3 sm:px-4"
+                    className="absolute inset-y-0 right-0 flex items-center justify-center w-12 h-full rounded-r-md hover:bg-muted/50 transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    aria-label={showConfirmPassword ? "Ocultar senha" : "Mostrar senha"}
                   >
                     {showConfirmPassword ? (
-                      <EyeOff className="h-4 w-4" />
+                      <EyeOff className="h-4 w-4 text-muted-foreground hover:text-foreground transition-colors" />
                     ) : (
-                      <Eye className="h-4 w-4" />
+                      <Eye className="h-4 w-4 text-muted-foreground hover:text-foreground transition-colors" />
                     )}
                   </button>
                 </div>
                 {confirmPassword && password !== confirmPassword && (
-                  <label className="label pt-1">
-                    <span className="label-text-alt text-error text-xs sm:text-sm">
-                      As senhas não coincidem
-                    </span>
-                  </label>
+                  <p className="text-xs text-red-500 mt-1">
+                    As senhas não coincidem
+                  </p>
                 )}
               </div>
 
@@ -248,7 +253,7 @@ export function SignUpForm({
               {/* Submit Button */}
               <Button
                 type="submit"
-                className="w-full h-11 sm:h-12 text-sm sm:text-base font-medium"
+                className="btn btn-primary w-full h-11 sm:h-12 text-sm sm:text-base font-medium"
                 disabled={isLoading || password !== confirmPassword || passwordStrength < 3}
               >
                 {isLoading ? (
@@ -261,38 +266,31 @@ export function SignUpForm({
                 )}
               </Button>
             </div>
-          </form>
-
-          {/* Terms */}
-          <div className="text-center mt-4 sm:mt-6">
-            <p className="text-xs sm:text-sm text-base-content/60 leading-relaxed">
-              Ao criar uma conta, você concorda com nossos{" "}
-              <Link href="/terms" className="link link-primary">
-                Termos de Uso
-              </Link>{" "}
-              e{" "}
-              <Link href="/privacy" className="link link-primary">
-                Política de Privacidade
+            <div className="mt-4 text-center text-sm">
+              Já tem uma conta?{" "}
+              <Link
+                href="/auth/login"
+                className="underline underline-offset-4"
+              >
+                Fazer login
               </Link>
-            </p>
-          </div>
-
-          {/* Divider */}
-          <div className="divider my-6 sm:my-8 text-xs sm:text-sm text-base-content/50">
-            Já tem uma conta?
-          </div>
-
-          {/* Login link */}
-          <div className="text-center">
-            <Link
-              href="/auth/login"
-              className="btn btn-outline w-full h-11 sm:h-12 text-sm sm:text-base font-medium"
-            >
-              Fazer login
-            </Link>
-          </div>
+            </div>
+          </form>
         </CardContent>
       </Card>
+      
+      <div className="text-center mt-6 sm:mt-8">
+        <p className="text-xs sm:text-sm text-base-content/50">
+          Ao criar uma conta, você concorda com nossos{" "}
+          <Link href="/terms" className="link link-primary">
+            Termos de Uso
+          </Link>{" "}
+          e{" "}
+          <Link href="/privacy" className="link link-primary">
+            Política de Privacidade
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }

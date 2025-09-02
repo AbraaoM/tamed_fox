@@ -40,7 +40,6 @@ export function LoginForm({
         password,
       });
       if (error) throw error;
-      // Update this route to redirect to an authenticated route. The user already has an active session.
       router.push("/protected");
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "Erro ao fazer login");
@@ -88,7 +87,7 @@ export function LoginForm({
                     Esqueceu sua senha?
                   </Link>
                 </div>
-                <div className="join w-full">
+                <div className="relative">
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
@@ -96,17 +95,18 @@ export function LoginForm({
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="flex-1"
+                    className="pr-12"
                   />
                   <button
                     type="button"
-                    className="btn btn-outline join-item h-11 sm:h-12 px-3 sm:px-4"
+                    className="absolute inset-y-0 right-0 flex items-center justify-center w-12 h-full rounded-r-md hover:bg-muted/50 transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
                     onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
                   >
                     {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
+                      <EyeOff className="h-4 w-4 text-muted-foreground hover:text-foreground transition-colors" />
                     ) : (
-                      <Eye className="h-4 w-4" />
+                      <Eye className="h-4 w-4 text-muted-foreground hover:text-foreground transition-colors" />
                     )}
                   </button>
                 </div>
@@ -154,6 +154,10 @@ export function LoginForm({
           Ao fazer login, você concorda com nossos{" "}
           <Link href="/terms" className="link link-primary">
             Termos de Uso
+          </Link>{" "}
+          e{" "}
+          <Link href="/privacy" className="link link-primary">
+            Política de Privacidade
           </Link>
         </p>
       </div>
