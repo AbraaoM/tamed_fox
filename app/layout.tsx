@@ -9,7 +9,7 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "🦊 TAMED FOX",
+  title: "TAMED FOX",
   description: "Uma plataforma moderna e intuitiva para gerenciar seus projetos",
   icons: {
     icon: [
